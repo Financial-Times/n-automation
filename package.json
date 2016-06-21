@@ -1,8 +1,7 @@
 {
   "name": "@financial-times/n-automation",
   "main": "build/main.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/Financial-Times/n-automation.git"
@@ -22,7 +21,7 @@
   "engines": {
     "node": "5.10.1"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "prepublish": "make build"
   }
