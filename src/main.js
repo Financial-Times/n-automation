@@ -174,7 +174,19 @@ class Automation {
 				console.log('NOT SENDING EMAIL', error, stderr)
 			}
 		});
-	};
+	}
+
+
+	dryRun () {
+		const fakeStdout = sample.output;
+		const output = curate(fakeStdout);
+
+		console.log(output);
+		// sendSlackNotification(false, output);
+		// sendEmails(false, output);
+	}
+
+	// this.dryRun();
 
 }
 export default Automation;
