@@ -12,7 +12,7 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport(REGRESSION_TRANSPORT);
 const exec = require('child_process').exec;
 const fetch = require('isomorphic-fetch');
-const sample = require('./sample.js');
+// const sample = require('./sample.js');
 
 let VERBOSE = true;
 
@@ -177,14 +177,14 @@ class Automation {
 	}
 
 
-	dryRun () {
-		const fakeStdout = sample.output;
-		const output = curate(fakeStdout);
+	// dryRun () {
+	// 	const fakeStdout = sample.output;
+	// 	const output = curate(fakeStdout);
 
-		console.log(output);
-		// sendSlackNotification(false, output);
-		// sendEmails(false, output);
-	}
+	// 	console.log(output);
+	// 	// sendSlackNotification(false, output);
+	// 	// sendEmails(false, output);
+	// }
 
 	// this.dryRun();
 
