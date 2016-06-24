@@ -19,7 +19,7 @@ let VERBOSE = true;
 const sendEmails = function (err, output) {
 
 	const options = {
-		from: '"Signup Regression" <no-reply@ft.com>', 
+		from: '"Signup Regression" <no-reply@ft.com>',
 		to: RECIPIENTS,
 		subject: `❗Regression tests failed ${new Date()}`,
 		text: output.replace('[0;37m ','').replace('[41m ', '').replace('[42m ', '').replace('[44m ', '').replace('[45m ', '')
@@ -112,7 +112,7 @@ const curate = function (stdout, stderr) {
 	}
 
 	while (moreTestResults) {
-	
+
 		let index = stdout.indexOf(marker);
 
 		if (index === -1) {
@@ -125,7 +125,7 @@ const curate = function (stdout, stderr) {
 		if (!result[testName]) {
 			result[testName] = [];
 		}
-		
+
 		let browser = null;
 		let largestIndex = null;
 		for (const candidate of SUPPORTED_BROWSERS) {
