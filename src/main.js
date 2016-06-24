@@ -14,7 +14,7 @@ const exec = require('child_process').exec;
 const fetch = require('isomorphic-fetch');
 const sample = require('./sample.js');
 
-const VERBOSE = true;
+let VERBOSE = true;
 
 const sendEmails = function (err, output) {
 
