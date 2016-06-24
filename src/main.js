@@ -8,6 +8,7 @@ const SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 // TODO exctract to config file
 const SUPPORTED_BROWSERS = ['ie8', 'ie9', 'ie10', 'ie11', 'chrome', 'firefox', 'edge', 'safari', 'iPhone6Plus', 'Nexus7'];
 
+const worker = require('@financial-times/n-worker');
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport(REGRESSION_TRANSPORT);
 const exec = require('child_process').exec;
@@ -176,6 +177,23 @@ class Automation {
 		});
 	}
 
+	schedule () {
+		// regression.ping();
+
+		worker.setup().then(function () {
+			console.log('scheduling');
+			new worker.CronJob({
+				// cronTime: '00 * * * *',
+				cronTime: '30 8,12,16 * * 1-5',
+				timeZone: 'Europe/London',
+				onTick: this.run,
+				onComplete: function () {
+					console.log('cronjob done');
+				}
+			});
+		});
+
+	}
 
 	// dryRun () {
 	// 	const fakeStdout = sample.output;
