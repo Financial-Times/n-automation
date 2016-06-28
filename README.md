@@ -1,4 +1,4 @@
-# n-mask-logger [![Circle CI](https://circleci.com/gh/Financial-Times/n-automation.svg?style=svg)](https://circleci.com/gh/Financial-Times/n-automation)
+# n-automation [![Circle CI](https://circleci.com/gh/Financial-Times/n-automation.svg?style=svg)](https://circleci.com/gh/Financial-Times/n-automation)
 
 Automated regression tests for your app using [nightwatch.js](http://nightwatchjs.org/)
 

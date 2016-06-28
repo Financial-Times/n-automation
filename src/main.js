@@ -13,7 +13,6 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport(REGRESSION_TRANSPORT);
 const exec = require('child_process').exec;
 const fetch = require('isomorphic-fetch');
-// const sample = require('./sample.js');
 
 let VERBOSE = true;
 
@@ -94,6 +93,7 @@ const sendSlackNotification = function (err, results) {
 	fetch(SLACK_URL, options);
 };
 
+// TODO don't read output, parse result files
 const curate = function (stdout, stderr) {
 	let moreTestResults = true;
 	const marker = 'Test: ';
@@ -149,13 +149,9 @@ const curate = function (stdout, stderr) {
 	return result;
 }
 
-class Automation {
+export class Automation {
 
-	constructor ({verbose=true}={}) {
-		VERBOSE = verbose;
-	}
-
-	run () {
+	static run () {
 		console.log('Starting regression tests');
 		sendSlackNotification();
 		exec('make regression', {env: process.env}, function (error, stdout, stderr) {
@@ -177,34 +173,21 @@ class Automation {
 		});
 	}
 
-	schedule () {
-		// regression.ping();
+	static schedule ({cronExpression='0 8 * * 1-5'}={}) {
 
 		worker.setup().then(function () {
-			console.log('scheduling');
+
+			console.log('scheduling', cronExpression);
+
 			new worker.CronJob({
-				// cronTime: '00 * * * *',
-				cronTime: '30 8,12,16 * * 1-5',
+				cronTime: cron,
 				timeZone: 'Europe/London',
 				onTick: this.run,
 				onComplete: function () {
 					console.log('cronjob done');
 				}
 			});
+
 		});
-
 	}
-
-	// dryRun () {
-	// 	const fakeStdout = sample.output;
-	// 	const output = curate(fakeStdout);
-
-	// 	console.log(output);
-	// 	// sendSlackNotification(false, output);
-	// 	// sendEmails(false, output);
-	// }
-
-	// this.dryRun();
-
 }
-export default Automation;
