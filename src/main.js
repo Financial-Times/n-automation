@@ -173,14 +173,14 @@ export class Automation {
 		});
 	}
 
-	static schedule ({cronExpression='0 8 * * 1-5'}={}) {
+	static schedule ({time='0 8 * * 1-5'}={}) {
 
 		worker.setup().then(function () {
 
-			console.log('scheduling', cronExpression);
+			console.log('scheduling', time);
 
 			new worker.CronJob({
-				cronTime: cron,
+				cronTime: time,
 				timeZone: 'Europe/London',
 				onTick: this.run,
 				onComplete: function () {
