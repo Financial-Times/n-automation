@@ -1,7 +1,10 @@
 {
   "name": "@financial-times/n-automation",
   "main": "build/main.js",
-  "dependencies": {},
+  "dependencies": {
+    "fs": "0.0.2",
+    "xml2js": "^0.4.17"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Financial-Times/n-automation.git"
