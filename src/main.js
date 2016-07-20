@@ -5,11 +5,6 @@
 // const RECIPIENTS = process.env.REGRESSION_RECIPIENTS;
 // const SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 
-const REGRESSION_RECIPIENTS = 'laura.carvajal@ft.com';
-const REGRESSION_TRANSPORT = 'smtps://next.cronjob%40gmail.com:bottlepenplant@smtp.gmail.com';
-const SLACK_MENTIONS= '@laura.carvajal';
-const SLACK_URL = 'https://hooks.slack.com/services/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';
-
 // TODO exctract to config file
 const SUPPORTED_BROWSERS = ['ie8', 'ie9', 'ie10', 'ie11', 'chrome', 'firefox', 'edge', 'safari', 'iPhone6Plus', 'Nexus7'];
 
