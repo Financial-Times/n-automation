@@ -1,5 +1,5 @@
-const SLACK_URL = process.env.SLACK_URL;
-const SLACK_MENTIONS = process.env.SLACK_MENTIONS;
+let SLACK_URL = process.env.SLACK_URL;
+let SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 
 SLACK_MENTIONS = '@laura.carvajal'; // override it while we spam
 
