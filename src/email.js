@@ -3,6 +3,7 @@ const RECIPIENTS = process.env.REGRESSION_RECIPIENTS;
 
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport(REGRESSION_TRANSPORT);
+const logger = require('@financial-times/n-logger').default.logger;
 
 module.exports = function sendEmails (err, output) {
 
@@ -15,8 +16,8 @@ module.exports = function sendEmails (err, output) {
 
 	transporter.sendMail(options, function (emailError, data) {
 		if (emailError) {
-			return console.log('Error sending emails', emailError);
+			return logger.info('Error sending emails', emailError);
 		}
-		console.log('Regression test notification sent to: ', data);
+		logger.info('Regression test notification sent to: ', data);
 	});
 };
