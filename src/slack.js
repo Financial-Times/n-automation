@@ -1,6 +1,8 @@
 const SLACK_URL = process.env.SLACK_URL;
 const SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 
+SLACK_MENTIONS = '@laura.carvajal'; // override it while we spam
+
 const fetch = require('isomorphic-fetch');
 const logger = require('@financial-times/n-logger').default.logger;
 
@@ -97,6 +99,9 @@ module.exports = function sendSlackNotification ({
 		}
 	};
 
+	console.log('error', error)
+	console.log('failuresFound', failuresFound, typeof failuresFound)
+
 	if (!error && failuresFound === 0) {
 		successBody.body = JSON.stringify(successBody.body);
 		logger.info('sending success body')
@@ -104,7 +109,6 @@ module.exports = function sendSlackNotification ({
 		fetch(SLACK_URL, successBody);
 	}
 	else {
-
 		const attachmentFailure = JSON.parse(JSON.stringify(attachmentSuccess));
 		attachmentFailure.color = '#f00';
 		attachmentFailure.fields = failedFields;
