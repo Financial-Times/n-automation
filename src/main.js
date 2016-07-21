@@ -1,193 +1,117 @@
-'use strict';
-
-const REGRESSION_TRANSPORT = process.env.REGRESSION_TRANSPORT;
-const SLACK_URL = process.env.SLACK_URL;
-const RECIPIENTS = process.env.REGRESSION_RECIPIENTS;
-const SLACK_MENTIONS = process.env.SLACK_MENTIONS;
-
-// TODO exctract to config file
-const SUPPORTED_BROWSERS = ['ie8', 'ie9', 'ie10', 'ie11', 'chrome', 'firefox', 'edge', 'safari', 'iPhone6Plus', 'Nexus7'];
-
-const worker = require('@financial-times/n-worker');
-const nodemailer = require('nodemailer');
-const transporter = nodemailer.createTransport(REGRESSION_TRANSPORT);
 const exec = require('child_process').exec;
-const fetch = require('isomorphic-fetch');
+const parseXML = require('xml2js').parseString;
+const fs = require('fs');
 
-let VERBOSE = true;
+const util = require('./util');
+const sendEmails = require('./email');
+const sendSlackNotification = require('./slack');
+const logger = require('@financial-times/n-logger').default.logger;
 
-const sendEmails = function (err, output) {
+function emptyReportsFolder (path) {
+	logger.info('Deleting old reports...')
 
-	const options = {
-		from: '"Signup Regression" <no-reply@ft.com>',
-		to: RECIPIENTS,
-		subject: `❗Regression tests failed ${new Date()}`,
-		text: output.replace('[0;37m ','').replace('[41m ', '').replace('[42m ', '').replace('[44m ', '').replace('[45m ', '')
-	};
+	const reportNames = fs.readdirSync(path);
 
-	transporter.sendMail(options, function (emailError, data) {
-		if (emailError) {
-			return console.log('Error sending emails', emailError);
-		}
-		console.log('Regression test notification sent to: ', data);
-	});
-};
-
-const sendSlackNotification = function (err, results) {
-	console.log('sendSlackNotification', err, results)
-	if (!results) {
-
-		// Don't show start message on slack when not in verbose mode
-		if (VERBOSE) {
-			const initOptions = {
-				method: 'POST',
-				body: JSON.stringify({
-					username: '(Beta) Signup Tests',
-					text: `Started ${new Date()}`
-				}),
-				headers: {
-					'Content-type': 'application/json'
-				}
-			};
-			fetch(SLACK_URL, initOptions);
-		}
-		return;
+	for (const name of reportNames) {
+		fs.unlinkSync(path + name);
 	}
-
-
-	const fields = [];
-
-	for (const key in results) {
-		if (results.hasOwnProperty(key)) {
-			fields.push({
-				'title': key,
-				'value': results[key].join(', '),
-				'short': false
-			});
-		}
-	}
-
-	const options = {
-		method: 'POST',
-		body: JSON.stringify({
-			username: '(Beta) Signup Tests',
-			'attachments': [
-				{
-					'fallback': '',
-
-					'text': err ? 	`Some automated tests have failed\n${SLACK_MENTIONS}` :
-									`${fields.length} of ${fields.length} tests passing`,
-
-					'color':  err ? 'warning' :
-									'good',
-
-					'fields': fields
-				}
-			]
-		}),
-		headers: {
-			'Content-type': 'application/json'
-		}
-	};
-
-	fetch(SLACK_URL, options);
-};
-
-// TODO don't read output, parse result files
-const curate = function (stdout, stderr) {
-	let moreTestResults = true;
-	const marker = 'Test: ';
-	const failMarker = 'TEST FAILURE';
-	const EOL = '\n';
-	let result = {};
-	let showedFailure = stdout.indexOf(failMarker) !== -1 ? true : false;
-
-	console.log('CURATING:');
-	console.log('failure', showedFailure, stdout.indexOf(failMarker));
-	console.log('stderr', stderr);
-
-	// We can show failure but succeed on a retry
-	// only return empty if stderr is present
-	if (showedFailure && stderr) {
-		return {};
-	}
-
-	while (moreTestResults) {
-
-		let index = stdout.indexOf(marker);
-
-		if (index === -1) {
-			moreTestResults = false;
-			break;
-		}
-
-		let testName = stdout.substring(index + marker.length, stdout.indexOf(EOL, index)).replace('[0m', '');
-
-		if (!result[testName]) {
-			result[testName] = [];
-		}
-
-		let browser = null;
-		let largestIndex = null;
-		for (const candidate of SUPPORTED_BROWSERS) {
-			let candidateIndex = stdout.lastIndexOf(candidate, index);
-
-			if (candidateIndex !== -1 && result[testName].indexOf(candidate) === -1) {
-				if (!largestIndex || candidateIndex > largestIndex) {
-					largestIndex = candidateIndex;
-					browser = candidate;
-				}
-			}
-		}
-		if (browser) {
-			result[testName].push(browser);
-		}
-		largestIndex = null;
-
-		stdout = stdout.substring(index + marker.length, stdout.length);
-	}
-	return result;
 }
 
-export class Automation {
+function readReports (path) {
 
-	static run () {
-		console.log('Starting regression tests');
-		sendSlackNotification();
-		exec('make regression', {env: process.env}, function (error, stdout, stderr) {
-			console.log('error', error);
-			console.log('stdout', stdout);
-			console.log('stderr', stderr);
-			const output = curate(stdout, stderr);
-			console.log('output', output)
+	logger.info('Reading new reports...')
+	const map = {};
 
-			sendSlackNotification(error || stderr, output);
+	const reportNames = fs.readdirSync(path);
 
-			if (error || stderr) {
-				console.log('SENDING EMAIL', error, stderr)
-				sendEmails(stderr, stdout);
-			}
-			else {
-				console.log('NOT SENDING EMAIL', error, stderr)
-			}
-		});
+	if (!reportNames) {
+		logger.info('No reports found!')
 	}
 
-	static schedule ({time='0 8 * * 1-5'}={}) {
+	for (const name of reportNames) {
 
-		worker.setup().then(function () {
+		const xmlContents = fs.readFileSync(`${path}/${name}`, 'utf8');
 
-			console.log('scheduling', time);
+		parseXML(xmlContents, function (xmlError, json) {
 
-			new worker.CronJob({
-				cronTime: time,
-				timeZone: 'Europe/London',
-				onTick: this.run,
-				onComplete: function () {
-					console.log('cronjob done');
-				}
+			// logger.info('\n\n\n\n', JSON.stringify(json))
+
+			const env = util.getEnvironmentData(name)
+			const suite = json.testsuites.testsuite[0]; // TODO accomodate multisuite
+			const suiteInfo = {
+				name: suite.$.name,
+				failures: suite.$.failures,
+				skipped: suite.$.skipped,
+				time: suite.$.time,
+				timestamp: suite.$.timestamps,
+				tests: []
+			}
+
+			for (const test of suite.testcase) {
+				suiteInfo.tests.push({
+					name: test.$.name,
+					failure: test.failure
+				})
+			}
+
+			if (map[env]) {
+				map[env].push(suiteInfo)
+			}
+			else {
+				map[env] = [suiteInfo];
+			};
+		})
+	}
+	return map;
+}
+
+module.exports = class Automation {
+
+	static run ({
+		nightwatchJson,
+		regressionCommand='make regression',
+		verbose=true,
+		packageJson = {},
+		appName,
+		appLogo
+	}={}) {
+
+		if (!nightwatchJson) {
+			throw new Error('must specify nightwtach config path')
+		}
+
+		logger.info('Starting regression tests...');
+		const reportsPath = nightwatchJson.output_folder;
+		emptyReportsFolder(reportsPath)
+
+
+		sendSlackNotification({
+			init: true,
+			appName: appName,
+			verbose: verbose
+		});
+
+
+		exec(regressionCommand, {env: process.env}, function (error, stdout, stderr) {
+			// logger.info('\n\nerror', error);
+			// logger.info('\n\nstdout', stdout);
+			// logger.info('\n\nstderr', stderr);
+
+			const reports = readReports(reportsPath);
+
+			sendSlackNotification({
+				error: error || stderr, // TODO ONLY non retry errors
+				reports: reports,
+				appName: appName,
+				appLogo: appLogo,
+				packageJson: packageJson,
+				verbose: verbose
 			});
 
+			if (error || stderr) {
+				logger.info('Sending email...', error, stderr)
+				sendEmails(stderr, stdout);
+			}
 		});
 	}
 }
