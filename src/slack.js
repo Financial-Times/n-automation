@@ -1,10 +1,8 @@
+const SLACK_URL = process.env.SLACK_URL;
+const SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 
-// const SLACK_URL = process.env.SLACK_URL;
-
-// const SLACK_MENTIONS = process.env.SLACK_MENTIONS;
-
-const SLACK_MENTIONS= '@laura.carvajal';
-const SLACK_URL = 'https://hooks.slack.com/services/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';
+const fetch = require('isomorphic-fetch');
+const logger = require('@financial-times/n-logger').default.logger;
 
 module.exports = function sendSlackNotification ({
 	init,
@@ -42,11 +40,11 @@ module.exports = function sendSlackNotification ({
 		for (const key in reports) {
 			if (reports.hasOwnProperty(key)) {
 
-				let testResults = '';
+				// let testResults = '';
 
-				// console.log('reports[key]', reports[key][0].tests)
+				// logger.info('reports[key]', reports[key][0].tests)
 				// for (const test of reports[key][0].tests) {
-				// 	console.log(test)
+				// 	logger.info(test)
 				// 	testResults += `\n${test.name}`;
 				// }
 
@@ -101,8 +99,8 @@ module.exports = function sendSlackNotification ({
 
 	if (!error && failuresFound === 0) {
 		successBody.body = JSON.stringify(successBody.body);
-		console.log('sending success body')
-		console.log(successBody)
+		logger.info('sending success body')
+		logger.info(successBody)
 		fetch(SLACK_URL, successBody);
 	}
 	else {
@@ -113,14 +111,14 @@ module.exports = function sendSlackNotification ({
 		attachmentFailure.pretext = `${failuresFound} tests failed`;
 		attachmentFailure.text = SLACK_MENTIONS;
 
-		attachmentSuccess.pretext = 'These tests are passing:'
+		attachmentSuccess.pretext = 'These tests have passed:'
 
 		const failureBody = JSON.parse(JSON.stringify(successBody));
 		failureBody.body.attachments = [attachmentFailure, attachmentSuccess]
 
 		failureBody.body = JSON.stringify(failureBody.body);
-		console.log('sending failure body')
-		console.log(failureBody)
+		logger.info('sending failure body')
+		logger.info(failureBody)
 		fetch(SLACK_URL, failureBody);
 	}
 };

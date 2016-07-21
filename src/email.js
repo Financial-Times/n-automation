@@ -1,12 +1,8 @@
 const REGRESSION_TRANSPORT = process.env.REGRESSION_TRANSPORT;
 const RECIPIENTS = process.env.REGRESSION_RECIPIENTS;
+
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport(REGRESSION_TRANSPORT);
-
-// TODO REMOVE
-const RECIPIENTS = 'laura.carvajal@ft.com';
-const REGRESSION_TRANSPORT = 'smtps://next.cronjob%40gmail.com:bottlepenplant@smtp.gmail.com';
-
 
 module.exports = function sendEmails (err, output) {
 

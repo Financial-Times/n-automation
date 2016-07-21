@@ -1,14 +1,14 @@
 const exec = require('child_process').exec;
-const fetch = require('isomorphic-fetch');
 const parseXML = require('xml2js').parseString;
 const fs = require('fs');
 
 const util = require('./util');
 const sendEmails = require('./email');
 const sendSlackNotification = require('./slack');
+const logger = require('@financial-times/n-logger').default.logger;
 
 function emptyReportsFolder (path) {
-	console.log('Deleting old reports...')
+	logger.info('Deleting old reports...')
 
 	const reportNames = fs.readdirSync(path);
 
@@ -19,13 +19,13 @@ function emptyReportsFolder (path) {
 
 function readReports (path) {
 
-	console.log('Reading new reports...')
+	logger.info('Reading new reports...')
 	const map = {};
 
 	const reportNames = fs.readdirSync(path);
 
 	if (!reportNames) {
-		console.log('No reports found!')
+		logger.info('No reports found!')
 	}
 
 	for (const name of reportNames) {
@@ -34,7 +34,7 @@ function readReports (path) {
 
 		parseXML(xmlContents, function (xmlError, json) {
 
-			// console.log('\n\n\n\n', JSON.stringify(json))
+			// logger.info('\n\n\n\n', JSON.stringify(json))
 
 			const env = util.getEnvironmentData(name)
 			const suite = json.testsuites.testsuite[0]; // TODO accomodate multisuite
@@ -80,7 +80,7 @@ module.exports = class Automation {
 			throw new Error('must specify nightwtach config path')
 		}
 
-		console.log('Starting regression tests...');
+		logger.info('Starting regression tests...');
 		const reportsPath = nightwatchJson.output_folder;
 		emptyReportsFolder(reportsPath)
 
@@ -93,11 +93,12 @@ module.exports = class Automation {
 
 
 		exec(regressionCommand, {env: process.env}, function (error, stdout, stderr) {
-			// console.log('\n\nerror', error);
-			// console.log('\n\nstdout', stdout);
-			// console.log('\n\nstderr', stderr);
+			// logger.info('\n\nerror', error);
+			// logger.info('\n\nstdout', stdout);
+			// logger.info('\n\nstderr', stderr);
 
 			const reports = readReports(reportsPath);
+
 			sendSlackNotification({
 				error: error || stderr, // TODO ONLY non retry errors
 				reports: reports,
@@ -108,8 +109,8 @@ module.exports = class Automation {
 			});
 
 			if (error || stderr) {
-				console.log('Sending email...', error, stderr)
-				// sendEmails(stderr, stdout);
+				logger.info('Sending email...', error, stderr)
+				sendEmails(stderr, stdout);
 			}
 		});
 	}
