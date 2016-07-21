@@ -12,6 +12,8 @@ function emptyReportsFolder (path) {
 
 	const reportNames = fs.readdirSync(path);
 
+	logger.info(reportNames);
+
 	for (const name of reportNames) {
 		if (name.indexOf('xml')) {
 			fs.unlinkSync(`${path}/${name}`);
