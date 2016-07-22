@@ -27,6 +27,7 @@ function readReports (path) {
 	const map = {};
 
 	const reportNames = fs.readdirSync(path);
+	logger.info(reportNames);
 
 	if (!reportNames) {
 		logger.info('No reports found!')
