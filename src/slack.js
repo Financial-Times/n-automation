@@ -1,8 +1,6 @@
 let SLACK_URL = process.env.SLACK_URL;
 let SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 
-SLACK_MENTIONS = '@laura.carvajal'; // override it while we spam
-
 const fetch = require('isomorphic-fetch');
 const logger = require('@financial-times/n-logger').default.logger;
 
@@ -38,6 +36,7 @@ module.exports = function sendSlackNotification ({
 	const failedFields = [];
 	let failuresFound = 0;
 
+
 	if (verbose) {
 		for (const key in reports) {
 			if (reports.hasOwnProperty(key)) {
@@ -50,23 +49,36 @@ module.exports = function sendSlackNotification ({
 				// 	testResults += `\n${test.name}`;
 				// }
 
-				const failures = reports[key][0].failures;
+				let failures = 0;
 
-				failuresFound += Number(failures);
+				for (const test of reports[key]) {
+					failures += test.failures
+					failuresFound += Number(failures);
 
-				if (failures > 0) {
-					failedFields.push({
-						'title': key,
-						'value': reports[key][0].name,
-						'short': true
-					});
-				}
-				else {
-					successFields.push({
-						'title': key,
-						'value': reports[key][0].name,
-						'short': true
-					});
+					if (failures > 0) {
+						failedFields.push({
+							'title': key,
+							'value': test.name,
+							'short': false
+						});
+					}
+					else {
+
+						const existingField = successFields.find(function (field) {
+							return field.title === key;
+						})
+
+						if (existingField) {
+							existingField.value += `, ${test.name}`
+						}
+						else {
+							successFields.push({
+								'title': key,
+								'value': test.name,
+								'short': false
+							});
+						}
+					}
 				}
 			}
 		}
@@ -98,9 +110,6 @@ module.exports = function sendSlackNotification ({
 			'Content-type': 'application/json'
 		}
 	};
-
-	console.log('error', error)
-	console.log('failuresFound', failuresFound, typeof failuresFound)
 
 	if (!error && failuresFound === 0) {
 		successBody.body = JSON.stringify(successBody.body);
