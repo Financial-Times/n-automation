@@ -36,7 +36,6 @@ module.exports = function sendSlackNotification ({
 	const failedFields = [];
 	let failuresFound = 0;
 
-
 	if (verbose) {
 		for (const key in reports) {
 			if (reports.hasOwnProperty(key)) {
