@@ -97,14 +97,14 @@ module.exports = class Automation {
 
 
 		exec(regressionCommand, {env: process.env}, function (error, stdout, stderr) {
-			// logger.info('\n\nerror', error);
-			// logger.info('\n\nstdout', stdout);
-			// logger.info('\n\nstderr', stderr);
+			logger.info('\n\nerror', error);
+			logger.info('\n\nstdout', stdout);
+			logger.info('\n\nstderr', stderr);
 
 			const reports = readReports(reportsPath);
 
 			sendSlackNotification({
-				error: error || stderr, // TODO ONLY non retry errors
+				error: error,
 				reports: reports,
 				appName: appName,
 				appLogo: appLogo,
@@ -112,7 +112,7 @@ module.exports = class Automation {
 				verbose: verbose
 			});
 
-			if (error || stderr) {
+			if (error) {
 				logger.info('Sending email...', error, stderr)
 				sendEmails(stderr, stdout);
 			}
