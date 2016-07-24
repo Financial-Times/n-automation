@@ -1,5 +1,6 @@
 let SLACK_URL = process.env.SLACK_URL;
-let SLACK_MENTIONS = process.env.SLACK_MENTIONS;
+let SLACK_MENTIONS = '@laura.carvajal'//process.env.SLACK_MENTIONS;
+SLACK_URL="https://hooks.slack.com/services/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";
 
 const fetch = require('isomorphic-fetch');
 const logger = require('@financial-times/n-logger').default.logger;
@@ -98,18 +99,17 @@ module.exports = function sendSlackNotification ({
 	}
 
 	const attachmentSuccess = {
-		'fallback': '',
 		'fallback': 'All tests passed',
 		'pretext': 'All regression tests passed!',
-		'author_name': 'Saucelabs Dashboard',
-		'author_link': 'https://saucelabs.com/beta/dashboard/tests',
-		'author_icon': 'https://marketplace-cdn.atlassian.com/files/images/2fdb6577-55eb-4d53-a5f5-87771ea85929.png',
-		'title': `${appHerokuName}`,
-		'title_link': appGithub,
+		// 'author_name': 'Saucelabs Dashboard',
+		// 'author_link': 'https://saucelabs.com/beta/dashboard/tests',
+		// 'author_icon': 'https://marketplace-cdn.atlassian.com/files/images/2fdb6577-55eb-4d53-a5f5-87771ea85929.png',
+		// 'title': `${appHerokuName}`,
+		// 'title_link': appGithub,
 		'color': 'good',
 		'fields': successFields,
-		'footer': `${appName}`,
-		'footer_icon': appLogo,
+		// 'footer': `${appName}`,
+		// 'footer_icon': appLogo,
 		'ts': Date.now() / 1000
 	}
 
@@ -134,7 +134,7 @@ module.exports = function sendSlackNotification ({
 		const attachmentFailure = JSON.parse(JSON.stringify(attachmentSuccess));
 		attachmentFailure.color = '#f00';
 		attachmentFailure.fields = failedFields;
-		attachmentFailure.pretext = `${failuresFound} tests failed`;
+		attachmentFailure.pretext = `${failuresFound} tests failed:`;
 		attachmentFailure.text = SLACK_MENTIONS;
 
 		attachmentSuccess.pretext = 'These tests have passed:'
