@@ -1,5 +1,5 @@
 let SLACK_URL = process.env.SLACK_URL;
-let SLACK_MENTIONS = '@laura.carvajal'//process.env.SLACK_MENTIONS;
+let SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 
 const fetch = require('isomorphic-fetch');
 const logger = require('@financial-times/n-logger').default.logger;
@@ -47,42 +47,47 @@ module.exports = function sendSlackNotification ({
 
 				for (const test of reports[key]) { // test suite: gateways
 					let failures = 0;
-					failures += test.failures
+					let passed = 0;
+					failures += test.failures;
 					failuresFound += Number(failures);
 
 					for (const testCase of test.tests) { // test: UK | PREMIUM |...
 
-						console.log(`\n\n\n${testCase.name} body ${JSON.stringify(testCase)}`)
+						console.log(`\n\n\n${testCase.name} failures? ${testCase.failure}`)
 
 						if (testCase.failure) {
 							failedTestResults += `\n${testCase.name} (https://saucelabs.com/beta/dashboard/tests)`;
 						}
 						else {
-							testResults += `\n${testCase.name}`
+							testResults += `\n${testCase.name}`;
+							passed += passed;
 						}
 					}
 
-					if (failedTestResults && !testResults) { // all test cases failed
+					console.log(failedTestResults, testResults)
+
+					if (failures > 0) { // all test cases failed
 
 						failedFields.push({
 							'title': key,
-							'value': `*${test.name}*:${failedTestResults}`,
+							'value': `${test.name}:${failedTestResults}`,
 							'short': false
 						});
 					}
-					else {
+
+					if (passed > 0) {
 
 						const existingField = successFields.find(function (field) {
 							return field.title === key;
 						})
 
 						if (existingField) {
-							existingField.value += `\n*${test.name}*` + (failedTestResults ? '(partial success)' : '')
+							existingField.value += `\n${test.name}` + (failedTestResults ? ' (partial success)' : '')
 						}
 						else {
 							successFields.push({
 								'title': key,
-								'value': `*${test.name}*` + (failedTestResults ? '(partial success)' : ''),
+								'value': `${test.name}` + (failedTestResults ? ' (partial success)' : ''),
 								'short': false
 							});
 						}
