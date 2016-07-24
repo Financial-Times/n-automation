@@ -8,14 +8,14 @@ module.exports = function sendSlackNotification ({
 	init,
 	error,
 	reports,
-	packageJson,
+	// packageJson,
 	verbose,
-	appName = 'Regression',
-	appLogo = 'https://next-geebee.ft.com/assets/brand-ft/icons/favicon-32x32.png'
+	appName = 'Regression'
+	// appLogo = 'https://next-geebee.ft.com/assets/brand-ft/icons/favicon-32x32.png'
 }={}) {
 
-	const appGithub = packageJson && packageJson.repository ? packageJson.repository.url : '';
-	const appHerokuName = packageJson ? packageJson.name : '';
+	// const appGithub = packageJson && packageJson.repository ? packageJson.repository.url : '';
+	// const appHerokuName = packageJson ? packageJson.name : '';
 
 	if (init && verbose) {
 		const initOptions = {
@@ -38,42 +38,50 @@ module.exports = function sendSlackNotification ({
 
 	if (verbose) {
 		for (const key in reports) {
-			if (reports.hasOwnProperty(key)) {
+			if (reports.hasOwnProperty(key)) { // key is browser
 
-				// let testResults = '';
+				let testResults = '';
+				let failedTestResults = '';
 
-				// logger.info('reports[key]', reports[key][0].tests)
-				// for (const test of reports[key][0].tests) {
-				// 	logger.info(test)
-				// 	testResults += `\n${test.name}`;
-				// }
-
-				let failures = 0;
-
-				for (const test of reports[key]) {
-					failures += test.failures
+				for (const test of reports[key]) { // test suite: gateways
+					let failures = 0;
+					let passed = 0;
+					failures += test.failures;
 					failuresFound += Number(failures);
 
-					if (failures > 0) {
+					for (const testCase of test.tests) { // test: UK | PREMIUM |...
+
+						if (testCase.failure) {
+							failedTestResults += `\n${testCase.name} (<https://saucelabs.com/beta/dashboard/tests|Video>)`;
+						}
+						else {
+							testResults += `\n${testCase.name}`;
+							passed++;
+						}
+					}
+
+					if (failures > 0) { // all test cases for a suite failed
+
 						failedFields.push({
 							'title': key,
-							'value': test.name,
+							'value': `${test.name}:${failedTestResults}`,
 							'short': false
 						});
 					}
-					else {
+
+					if (passed > 0) {
 
 						const existingField = successFields.find(function (field) {
 							return field.title === key;
 						})
 
 						if (existingField) {
-							existingField.value += `, ${test.name}`
+							existingField.value += `\n${test.name}` + (failedTestResults ? ' (partial success)' : '')
 						}
 						else {
 							successFields.push({
 								'title': key,
-								'value': test.name,
+								'value': `${test.name}` + (failedTestResults ? ' (some failed)' : ''),
 								'short': false
 							});
 						}
@@ -84,19 +92,18 @@ module.exports = function sendSlackNotification ({
 	}
 
 	const attachmentSuccess = {
-		'fallback': '',
 		'fallback': 'All tests passed',
-		'pretext': 'All regression tests passed!',
-		'author_name': 'Saucelabs Dashboard',
-		'author_link': 'https://saucelabs.com/beta/dashboard/tests',
-		'author_icon': 'https://marketplace-cdn.atlassian.com/files/images/2fdb6577-55eb-4d53-a5f5-87771ea85929.png',
-		'title': `${appHerokuName}`,
-		'title_link': appGithub,
+		// 'pretext': 'All regression tests passed!',
+		// 'author_name': 'Saucelabs Dashboard',
+		// 'author_link': 'https://saucelabs.com/beta/dashboard/tests',
+		// 'author_icon': 'https://marketplace-cdn.atlassian.com/files/images/2fdb6577-55eb-4d53-a5f5-87771ea85929.png',
+		// 'title': `${appHerokuName}`,
+		// 'title_link': appGithub,
 		'color': 'good',
 		'fields': successFields,
-		'footer': `${appName}`,
-		'footer_icon': appLogo,
-		'ts': Date.now() / 1000
+		// 'footer': `${appName}`,
+		// 'footer_icon': appLogo,
+		// 'ts': Date.now() / 1000
 	}
 
 	const successBody = {
@@ -120,13 +127,13 @@ module.exports = function sendSlackNotification ({
 		const attachmentFailure = JSON.parse(JSON.stringify(attachmentSuccess));
 		attachmentFailure.color = '#f00';
 		attachmentFailure.fields = failedFields;
-		attachmentFailure.pretext = `${failuresFound} tests failed`;
-		attachmentFailure.text = SLACK_MENTIONS;
-
-		attachmentSuccess.pretext = 'These tests have passed:'
+		// attachmentFailure.pretext = `${failuresFound} tests failed:`;
+		// attachmentFailure.text = SLACK_MENTIONS;
+		// attachmentSuccess.pretext = 'These tests have passed:'
 
 		const failureBody = JSON.parse(JSON.stringify(successBody));
-		failureBody.body.attachments = [attachmentFailure, attachmentSuccess]
+		failureBody.body.attachments = [attachmentFailure, attachmentSuccess];
+		failureBody.body.text = `${failuresFound} test case failed, ${SLACK_MENTIONS}`;
 
 		failureBody.body = JSON.stringify(failureBody.body);
 		logger.info('sending failure body')
