@@ -1,6 +1,5 @@
 let SLACK_URL = process.env.SLACK_URL;
-let SLACK_MENTIONS = '@laura.carvajal'//process.env.SLACK_MENTIONS;
-SLACK_URL="https://hooks.slack.com/services/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";
+let SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 
 const fetch = require('isomorphic-fetch');
 const logger = require('@financial-times/n-logger').default.logger;
@@ -9,14 +8,14 @@ module.exports = function sendSlackNotification ({
 	init,
 	error,
 	reports,
-	packageJson,
+	// packageJson,
 	verbose,
-	appName = 'Regression',
-	appLogo = 'https://next-geebee.ft.com/assets/brand-ft/icons/favicon-32x32.png'
+	appName = 'Regression'
+	// appLogo = 'https://next-geebee.ft.com/assets/brand-ft/icons/favicon-32x32.png'
 }={}) {
 
-	const appGithub = packageJson && packageJson.repository ? packageJson.repository.url : '';
-	const appHerokuName = packageJson ? packageJson.name : '';
+	// const appGithub = packageJson && packageJson.repository ? packageJson.repository.url : '';
+	// const appHerokuName = packageJson ? packageJson.name : '';
 
 	if (init && verbose) {
 		const initOptions = {
@@ -37,8 +36,6 @@ module.exports = function sendSlackNotification ({
 	const failedFields = [];
 	let failuresFound = 0;
 
-	console.log(reports)
-
 	if (verbose) {
 		for (const key in reports) {
 			if (reports.hasOwnProperty(key)) { // key is browser
@@ -54,8 +51,6 @@ module.exports = function sendSlackNotification ({
 
 					for (const testCase of test.tests) { // test: UK | PREMIUM |...
 
-						console.log(`\n\n\n${testCase.name} failures? ${testCase.failure}`)
-
 						if (testCase.failure) {
 							failedTestResults += `\n${testCase.name} (<https://saucelabs.com/beta/dashboard/tests|Video>)`;
 						}
@@ -65,9 +60,7 @@ module.exports = function sendSlackNotification ({
 						}
 					}
 
-					console.log(failedTestResults, testResults)
-
-					if (failures > 0) { // all test cases failed
+					if (failures > 0) { // all test cases for a suite failed
 
 						failedFields.push({
 							'title': key,
@@ -88,7 +81,7 @@ module.exports = function sendSlackNotification ({
 						else {
 							successFields.push({
 								'title': key,
-								'value': `${test.name}` + (failedTestResults ? ' (partial success)' : ''),
+								'value': `${test.name}` + (failedTestResults ? ' (some failed)' : ''),
 								'short': false
 							});
 						}
@@ -100,7 +93,7 @@ module.exports = function sendSlackNotification ({
 
 	const attachmentSuccess = {
 		'fallback': 'All tests passed',
-		'pretext': 'All regression tests passed!',
+		// 'pretext': 'All regression tests passed!',
 		// 'author_name': 'Saucelabs Dashboard',
 		// 'author_link': 'https://saucelabs.com/beta/dashboard/tests',
 		// 'author_icon': 'https://marketplace-cdn.atlassian.com/files/images/2fdb6577-55eb-4d53-a5f5-87771ea85929.png',
@@ -110,7 +103,7 @@ module.exports = function sendSlackNotification ({
 		'fields': successFields,
 		// 'footer': `${appName}`,
 		// 'footer_icon': appLogo,
-		'ts': Date.now() / 1000
+		// 'ts': Date.now() / 1000
 	}
 
 	const successBody = {
@@ -134,13 +127,13 @@ module.exports = function sendSlackNotification ({
 		const attachmentFailure = JSON.parse(JSON.stringify(attachmentSuccess));
 		attachmentFailure.color = '#f00';
 		attachmentFailure.fields = failedFields;
-		attachmentFailure.pretext = `${failuresFound} tests failed:`;
-		attachmentFailure.text = SLACK_MENTIONS;
-
-		attachmentSuccess.pretext = 'These tests have passed:'
+		// attachmentFailure.pretext = `${failuresFound} tests failed:`;
+		// attachmentFailure.text = SLACK_MENTIONS;
+		// attachmentSuccess.pretext = 'These tests have passed:'
 
 		const failureBody = JSON.parse(JSON.stringify(successBody));
-		failureBody.body.attachments = [attachmentFailure, attachmentSuccess]
+		failureBody.body.attachments = [attachmentFailure, attachmentSuccess];
+		failureBody.body.text = `${failuresFound} test case failed, ${SLACK_MENTIONS}`;
 
 		failureBody.body = JSON.stringify(failureBody.body);
 		logger.info('sending failure body')
