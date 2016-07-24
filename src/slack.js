@@ -56,11 +56,11 @@ module.exports = function sendSlackNotification ({
 						console.log(`\n\n\n${testCase.name} failures? ${testCase.failure}`)
 
 						if (testCase.failure) {
-							failedTestResults += `\n${testCase.name} (https://saucelabs.com/beta/dashboard/tests)`;
+							failedTestResults += `\n${testCase.name} (<https://saucelabs.com/beta/dashboard/tests|Video>)`;
 						}
 						else {
 							testResults += `\n${testCase.name}`;
-							passed += passed;
+							passed++;
 						}
 					}
 
