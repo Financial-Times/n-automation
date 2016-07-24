@@ -1,5 +1,5 @@
 let SLACK_URL = process.env.SLACK_URL;
-let SLACK_MENTIONS = process.env.SLACK_MENTIONS;
+let SLACK_MENTIONS = '@laura.carvajal'//process.env.SLACK_MENTIONS;
 
 const fetch = require('isomorphic-fetch');
 const logger = require('@financial-times/n-logger').default.logger;
@@ -36,28 +36,37 @@ module.exports = function sendSlackNotification ({
 	const failedFields = [];
 	let failuresFound = 0;
 
+	console.log(reports)
+
 	if (verbose) {
 		for (const key in reports) {
-			if (reports.hasOwnProperty(key)) {
+			if (reports.hasOwnProperty(key)) { // key is browser
 
-				// let testResults = '';
+				let testResults = '';
+				let failedTestResults = '';
 
-				// logger.info('reports[key]', reports[key][0].tests)
-				// for (const test of reports[key][0].tests) {
-				// 	logger.info(test)
-				// 	testResults += `\n${test.name}`;
-				// }
-
-				let failures = 0;
-
-				for (const test of reports[key]) {
+				for (const test of reports[key]) { // test suite: gateways
+					let failures = 0;
 					failures += test.failures
 					failuresFound += Number(failures);
 
-					if (failures > 0) {
+					for (const testCase of test.tests) { // test: UK | PREMIUM |...
+
+						console.log(`\n\n\n${testCase.name} body ${JSON.stringify(testCase)}`)
+
+						if (testCase.failure) {
+							failedTestResults += `\n${testCase.name} (https://saucelabs.com/beta/dashboard/tests)`;
+						}
+						else {
+							testResults += `\n${testCase.name}`
+						}
+					}
+
+					if (failedTestResults && !testResults) { // all test cases failed
+
 						failedFields.push({
 							'title': key,
-							'value': test.name,
+							'value': `*${test.name}*:${failedTestResults}`,
 							'short': false
 						});
 					}
@@ -68,12 +77,12 @@ module.exports = function sendSlackNotification ({
 						})
 
 						if (existingField) {
-							existingField.value += `, ${test.name}`
+							existingField.value += `\n*${test.name}*` + (failedTestResults ? '(partial success)' : '')
 						}
 						else {
 							successFields.push({
 								'title': key,
-								'value': test.name,
+								'value': `*${test.name}*` + (failedTestResults ? '(partial success)' : ''),
 								'short': false
 							});
 						}

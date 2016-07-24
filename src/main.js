@@ -44,7 +44,7 @@ function readReports (path) {
 			const env = util.getEnvironmentData(name)
 			const suite = json.testsuites.testsuite[0]; // TODO accomodate multisuite
 			const suiteInfo = {
-				name: suite.$.name,
+				name: `${suite.$.name}`,
 				failures: suite.$.failures,
 				skipped: suite.$.skipped,
 				time: suite.$.time,
@@ -103,6 +103,9 @@ module.exports = class Automation {
 			logger.info('\n\nstderr', stderr);
 
 			const reports = readReports(reportsPath);
+
+			console.log('******')
+			console.log(JSON.stringify(reports));
 
 			sendSlackNotification({
 				error: error,
