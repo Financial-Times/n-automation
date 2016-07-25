@@ -1,5 +1,4 @@
 const exec = require('child_process').exec;
-const parseXML = require('xml2js').parseString;
 const fs = require('fs');
 
 const util = require('./util');
@@ -15,7 +14,7 @@ function emptyReportsFolder (path) {
 	logger.info(reportNames);
 
 	for (const name of reportNames) {
-		if (name.indexOf('xml')) {
+		if (name !== '.gitignore') {
 			fs.unlinkSync(`${path}/${name}`);
 		}
 	}
@@ -35,37 +34,44 @@ function readReports (path) {
 
 	for (const name of reportNames) {
 
-		const xmlContents = fs.readFileSync(`${path}/${name}`, 'utf8');
+		const newJson = JSON.parse(fs.readFileSync(`${path}/${name}`, 'utf8'));
 
-		parseXML(xmlContents, function (xmlError, json) {
+		for (const moduleName in newJson.modules) {
+			if (newJson.hasOwnProperty(moduleName)) {
 
-			// logger.info('\n\n\n\n', JSON.stringify(json))
+				const module = newJson.modules[moduleName];
 
-			const env = util.getEnvironmentData(name)
-			const suite = json.testsuites.testsuite[0]; // TODO accomodate multisuite
-			const suiteInfo = {
-				name: suite.$.name,
-				failures: suite.$.failures,
-				skipped: suite.$.skipped,
-				time: suite.$.time,
-				timestamp: suite.$.timestamps,
-				tests: []
+				const suiteInfo = {
+					name: moduleName,
+					failures: module.failures,
+					skipped: module.skipped,
+					time: module.time,
+					timestamp: module.timestamp,
+					tests: []
+				}
+
+				for (const testCaseName in module.completed) {
+					if (module.completed.hasOwnProperty(testCaseName)) {
+						const testCase = module.completed[testCaseName];
+						suiteInfo.tests.push({
+							name: testCaseName,
+							failure: testCase.failed,
+							time: testCase.time,
+							videoUrl: `https://saucelabs.com/beta/tests/${newJson.sessionId}/watch`
+						});
+					}
+				}
+
+				const env = util.getEnvironmentData(name);
+
+				if (map[env]) {
+					map[env].push(suiteInfo)
+				}
+				else {
+					map[env] = [suiteInfo];
+				};
 			}
-
-			for (const test of suite.testcase) {
-				suiteInfo.tests.push({
-					name: test.$.name,
-					failure: test.failure
-				})
-			}
-
-			if (map[env]) {
-				map[env].push(suiteInfo)
-			}
-			else {
-				map[env] = [suiteInfo];
-			};
-		})
+		}
 	}
 	return map;
 }

@@ -10,7 +10,7 @@ module.exports = function sendSlackNotification ({
 	reports,
 	// packageJson,
 	verbose,
-	appName = 'Regression'
+	appName = 'Regression',
 	// appLogo = 'https://next-geebee.ft.com/assets/brand-ft/icons/favicon-32x32.png'
 }={}) {
 
@@ -36,6 +36,8 @@ module.exports = function sendSlackNotification ({
 	const failedFields = [];
 	let failuresFound = 0;
 
+	// console.log(reports)
+
 	if (verbose) {
 		for (const key in reports) {
 			if (reports.hasOwnProperty(key)) { // key is browser
@@ -51,8 +53,10 @@ module.exports = function sendSlackNotification ({
 
 					for (const testCase of test.tests) { // test: UK | PREMIUM |...
 
+						// console.log(`\n\n\n${testCase.name} failures? ${testCase.failure}`)
+
 						if (testCase.failure) {
-							failedTestResults += `\n${testCase.name} (<https://saucelabs.com/beta/dashboard/tests|Video>)`;
+							failedTestResults += `\n${testCase.name} (<${testCase.videoUrl}|Video>)`;
 						}
 						else {
 							testResults += `\n${testCase.name}`;
@@ -60,7 +64,9 @@ module.exports = function sendSlackNotification ({
 						}
 					}
 
-					if (failures > 0) { // all test cases for a suite failed
+					// console.log(failedTestResults, testResults)
+
+					if (failures > 0) { // all test cases failed
 
 						failedFields.push({
 							'title': key,
@@ -119,7 +125,7 @@ module.exports = function sendSlackNotification ({
 
 	if (!error && failuresFound === 0) {
 		successBody.body = JSON.stringify(successBody.body);
-		logger.info('sending success body')
+		// logger.info('sending success body')
 		logger.info(successBody)
 		fetch(SLACK_URL, successBody);
 	}
@@ -136,7 +142,7 @@ module.exports = function sendSlackNotification ({
 		failureBody.body.text = `${failuresFound} test case failed, ${SLACK_MENTIONS}`;
 
 		failureBody.body = JSON.stringify(failureBody.body);
-		logger.info('sending failure body')
+		// logger.info('sending failure body')
 		logger.info(failureBody)
 		fetch(SLACK_URL, failureBody);
 	}
