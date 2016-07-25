@@ -14,7 +14,7 @@ function emptyReportsFolder (path) {
 	logger.info(reportNames);
 
 	for (const name of reportNames) {
-		if (name !== '.gitignore') {
+		if (name.indexOf('json')) {
 			fs.unlinkSync(`${path}/${name}`);
 		}
 	}
@@ -34,12 +34,12 @@ function readReports (path) {
 
 	for (const name of reportNames) {
 
-		const newJson = JSON.parse(fs.readFileSync(`${path}/${name}`, 'utf8'));
+		const jsonReport = JSON.parse(fs.readFileSync(`${path}/${name}`, 'utf8'));
 
-		for (const moduleName in newJson.modules) {
-			if (newJson.hasOwnProperty(moduleName)) {
+		for (const moduleName in jsonReport.modules) {
+			if (jsonReport.hasOwnProperty(moduleName)) {
 
-				const module = newJson.modules[moduleName];
+				const module = jsonReport.modules[moduleName];
 
 				const suiteInfo = {
 					name: moduleName,
@@ -57,7 +57,7 @@ function readReports (path) {
 							name: testCaseName,
 							failure: testCase.failed,
 							time: testCase.time,
-							videoUrl: `https://saucelabs.com/beta/tests/${newJson.sessionId}/watch`
+							videoUrl: `https://saucelabs.com/beta/tests/${jsonReport.sessionId}/watch`
 						});
 					}
 				}
@@ -104,9 +104,9 @@ module.exports = class Automation {
 
 
 		exec(regressionCommand, {env: process.env}, function (error, stdout, stderr) {
-			logger.info('\n\nerror', error);
-			logger.info('\n\nstdout', stdout);
-			logger.info('\n\nstderr', stderr);
+			// logger.info('\n\nerror', error);
+			// logger.info('\n\nstdout', stdout);
+			// logger.info('\n\nstderr', stderr);
 
 			const reports = readReports(reportsPath);
 
