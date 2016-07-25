@@ -52,7 +52,7 @@ module.exports = function sendSlackNotification ({
 					for (const testCase of test.tests) { // test: UK | PREMIUM |...
 
 						if (testCase.failure) {
-							failedTestResults += `\n${testCase.name} (<${testCase.videoUrl}|Video>)`;
+							failedTestResults += `\n<${testCase.videoUrl}|${testCase.name}>`;
 						}
 						else {
 							testResults += `\n${testCase.name}`;
