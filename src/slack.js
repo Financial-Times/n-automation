@@ -52,7 +52,7 @@ module.exports = function sendSlackNotification ({
 					for (const testCase of test.tests) { // test: UK | PREMIUM |...
 
 						if (testCase.failure) {
-							failedTestResults += `\n${testCase.name} (<https://saucelabs.com/beta/dashboard/tests|Video>)`;
+							failedTestResults += `\n${testCase.name} (<${testCase.videoUrl}|Video>)`;
 						}
 						else {
 							testResults += `\n${testCase.name}`;
@@ -119,7 +119,7 @@ module.exports = function sendSlackNotification ({
 
 	if (!error && failuresFound === 0) {
 		successBody.body = JSON.stringify(successBody.body);
-		logger.info('sending success body')
+		// logger.info('sending success body')
 		logger.info(successBody)
 		fetch(SLACK_URL, successBody);
 	}
@@ -136,7 +136,7 @@ module.exports = function sendSlackNotification ({
 		failureBody.body.text = `${failuresFound} test case failed, ${SLACK_MENTIONS}`;
 
 		failureBody.body = JSON.stringify(failureBody.body);
-		logger.info('sending failure body')
+		// logger.info('sending failure body')
 		logger.info(failureBody)
 		fetch(SLACK_URL, failureBody);
 	}
