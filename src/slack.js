@@ -117,7 +117,9 @@ module.exports = function sendSlackNotification ({
 		}
 	};
 
-	if (!error && failuresFound === 0) {
+	logger.info('error?', error)
+
+	if (failuresFound === 0) {
 		successBody.body = JSON.stringify(successBody.body);
 		// logger.info('sending success body')
 		logger.info(successBody)
@@ -133,7 +135,7 @@ module.exports = function sendSlackNotification ({
 
 		const failureBody = JSON.parse(JSON.stringify(successBody));
 		failureBody.body.attachments = [attachmentFailure, attachmentSuccess];
-		failureBody.body.text = `${failuresFound} test case failed, ${SLACK_MENTIONS}`;
+		failureBody.body.text = `${failuresFound} test cases failed, ${SLACK_MENTIONS}`;
 
 		failureBody.body = JSON.stringify(failureBody.body);
 		// logger.info('sending failure body')
