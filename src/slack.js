@@ -36,8 +36,6 @@ module.exports = function sendSlackNotification ({
 	const failedFields = [];
 	let failuresFound = 0;
 
-	// console.log(reports)
-
 	if (verbose) {
 		for (const key in reports) {
 			if (reports.hasOwnProperty(key)) { // key is browser
@@ -53,8 +51,6 @@ module.exports = function sendSlackNotification ({
 
 					for (const testCase of test.tests) { // test: UK | PREMIUM |...
 
-						// console.log(`\n\n\n${testCase.name} failures? ${testCase.failure}`)
-
 						if (testCase.failure) {
 							failedTestResults += `\n${testCase.name} (<${testCase.videoUrl}|Video>)`;
 						}
@@ -63,8 +59,6 @@ module.exports = function sendSlackNotification ({
 							passed++;
 						}
 					}
-
-					// console.log(failedTestResults, testResults)
 
 					if (failures > 0) { // all test cases failed
 
