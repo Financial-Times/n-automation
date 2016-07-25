@@ -37,7 +37,7 @@ function readReports (path) {
 		const jsonReport = JSON.parse(fs.readFileSync(`${path}/${name}`, 'utf8'));
 
 		for (const moduleName in jsonReport.modules) {
-			if (jsonReport.hasOwnProperty(moduleName)) {
+			if (jsonReport.modules.hasOwnProperty(moduleName)) {
 
 				const module = jsonReport.modules[moduleName];
 
