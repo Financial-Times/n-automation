@@ -2,7 +2,8 @@
 
 Run automated [regression tests](https://en.wikipedia.org/wiki/Regression_testing) for your app using [nightwatch.js](http://nightwatchjs.org/) and get results on Slack and email.
 
-![slack notification](doc/slacknotif.png)
+<img src="doc/makefile.png" height="320">
+<img src="doc/slacknotif.png" height="320">
 
 ## Installation
 
