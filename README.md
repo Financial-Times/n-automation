@@ -1,8 +1,8 @@
 # n-automation [![Circle CI](https://circleci.com/gh/Financial-Times/n-automation.svg?style=svg)](https://circleci.com/gh/Financial-Times/n-automation)
 
-Run automated regression tests for your app using [nightwatch.js](http://nightwatchjs.org/) and get results on Slack and email.
+Run automated [regression tests](https://en.wikipedia.org/wiki/Regression_testing) for your app using [nightwatch.js](http://nightwatchjs.org/) and get results on Slack and email.
 
-[What are regression tests?](https://en.wikipedia.org/wiki/Regression_testing)
+![slack notification](doc/slacknotif.png)
 
 ## Installation
 
@@ -44,6 +44,7 @@ Automation.run({
 Schedule your job with something like the [Heroku Scheduler](https://elements.heroku.com/addons/scheduler). Once a day is recommended.
 
 ### Slack notifications
+
 
 ### Email on failure
 
