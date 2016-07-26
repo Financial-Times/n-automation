@@ -31,12 +31,12 @@ const Automation = require('@financial-times/n-automation');
 
 Automation.run({
 	appName: 'Your App Name',
-	nightwatchJson: require('../nightwatch.js') // If you have one. Defaults to the one in `n-heroku-tools`
+	nightwatchJson: require('../nightwatch.js') // If you have one. Uses `n-heroku-tools` default otherwise.
 });
 ```
 ### Env Variables
 
-`process.env.SLACK_URL` Webhooks url for the channel to notify of test results (required)
+`process.env.SLACK_URL` Slack [Incoming Webhook URL](https://api.slack.com/incoming-webhooks) for the channel to notify of test results (required)
 `process.env.SLACK_MENTIONS` Slack users to mention on failure (optional)
 
 ### Heroku Schedule
