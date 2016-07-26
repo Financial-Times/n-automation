@@ -10,9 +10,8 @@ Run automated [regression tests](https://en.wikipedia.org/wiki/Regression_testin
 
 ## Usage
 
-Write a `regression` recipe on your Makefile containing the tests you'd like to run, passing the `n-automation` reporter to `nht nightwatch`:
-
 ### Makefile
+Write a `regression` recipe on your Makefile containing the tests you'd like to run, passing the `n-automation` reporter to `nht nightwatch`:
 ```bash
 REPORTER = ./node_modules/@financial-times/n-automation/build/reporter.js
 
@@ -22,9 +21,9 @@ regression-core:
 	...
 ```
 
-Init `n-automation` in an independent file somewhere in your project:
+### Init
 
-### jobs/run-regression.js
+Init `n-automation` in an independent file somewhere in your project, for example `jobs/run-regression.js`:
 
 ```js
 const Automation = require('@financial-times/n-automation');
