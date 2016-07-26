@@ -31,9 +31,11 @@ const Automation = require('@financial-times/n-automation');
 
 Automation.run({
 	appName: 'Your App Name',
-	nightwatchJson: require('../nightwatch.js') // If you have one. Uses `n-heroku-tools` default otherwise.
+	nightwatchJson: require('../nightwatch.js')
 });
 ```
+Only pass in `nightwatchJson` if your project has a nightwatch config. If not, send only `appName` and `n-automation` will default to the `n-heroku-tools` [nightwatch config file](https://github.com/Financial-Times/n-heroku-tools/blob/master/config/nightwatch.json)
+
 ### Env Variables
 
 - `process.env.SLACK_URL` Slack [Incoming Webhook Integration URL](https://financialtimes.slack.com/apps/new/A0F7XDUAZ-incoming-webhooks) for the channel to notify
@@ -47,3 +49,7 @@ Schedule your job with something like the [Heroku Scheduler](https://elements.he
 ### Email on failure
 
 Full nightwatch output will be sent to the email addresses above whenever a test fails.
+
+### Examples
+
+See [next-signup](https://github.com/Financial-Times/next-signup)
