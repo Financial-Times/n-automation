@@ -2,8 +2,7 @@
 
 Run automated [regression tests](https://en.wikipedia.org/wiki/Regression_testing) for your app using [nightwatch.js](http://nightwatchjs.org/) and get results on Slack and email.
 
-<img src="doc/makefile.png" height="320">
-<img src="doc/slacknotif.png" height="320">
+<img src="doc/makefile.png" height="260"> <img src="doc/slacknotif.png" height="260">
 
 ## Installation
 
@@ -37,15 +36,14 @@ Automation.run({
 ```
 ### Env Variables
 
-`process.env.SLACK_URL` Slack [Incoming Webhook URL](https://api.slack.com/incoming-webhooks) for the channel to notify of test results (required)
+`process.env.SLACK_URL` Slack [Incoming Webhook URL](https://api.slack.com/incoming-webhooks) for the channel to notify of test results
 `process.env.SLACK_MENTIONS` Slack users to mention on failure (optional)
+`process.env.REGRESSION_RECIPIENTS` email addresses of the people to notify on test failure
 
 ### Heroku Schedule
 
 Schedule your job with something like the [Heroku Scheduler](https://elements.heroku.com/addons/scheduler). Once a day is recommended.
 
-### Slack notifications
-
-
 ### Email on failure
 
+Full nightwatch output will be sent to the email addresses above whenever a test fails.
