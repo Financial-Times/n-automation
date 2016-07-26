@@ -12,10 +12,11 @@ Run automated [regression tests](https://en.wikipedia.org/wiki/Regression_testin
 
 ### Makefile
 Write a `regression` recipe on your Makefile containing the tests you'd like to run, passing the `n-automation` reporter to `nht nightwatch`:
-```bash
+
+```sh
 REPORTER = ./node_modules/@financial-times/n-automation/build/reporter.js
 
-regression-core:
+regression:
 	nht nightwatch -c nightwatch.js path/to/test.js --reporter ${REPORTER}
 	nht nightwatch -c nightwatch.js path/to/anotherTest.js --reporter ${REPORTER}
 	...
