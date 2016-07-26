@@ -36,7 +36,7 @@ Automation.run({
 ```
 ### Env Variables
 
-- `process.env.SLACK_URL` Slack [Incoming Webhook URL](https://api.slack.com/incoming-webhooks) for the channel to notify of test results
+- `process.env.SLACK_URL` Slack [Incoming Webhook Integration URL](https://financialtimes.slack.com/apps/new/A0F7XDUAZ-incoming-webhooks) (FT only) for the channel to notify of test results
 - `process.env.SLACK_MENTIONS` Slack users to mention on failure (optional)
 - `process.env.REGRESSION_RECIPIENTS` email addresses of the people to notify on test failure
 
