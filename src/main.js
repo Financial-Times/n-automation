@@ -81,21 +81,17 @@ module.exports = class Automation {
 	static run ({
 		nightwatchJson,
 		regressionCommand='make regression',
-		smokeCommand='make smoke',
 		verbose=true,
 		packageJson = {},
 		appName,
-		appLogo,
-		suite='regression'
+		appLogo
 	}={}) {
 
 		if (!nightwatchJson) {
 			throw new Error('must specify nightwtach config path')
 		}
 
-		const command = suite && suite === 'smoke' ? smokeCommand : regressionCommand;
-
-		logger.info(`Starting ${suite} tests...`);
+		logger.info('Starting regression tests...');
 		const reportsPath = nightwatchJson.output_folder;
 		emptyReportsFolder(reportsPath)
 
@@ -103,12 +99,11 @@ module.exports = class Automation {
 		sendSlackNotification({
 			init: true,
 			appName: appName,
-			verbose: verbose,
-			suite: suite
+			verbose: verbose
 		});
 
 
-		exec(command, {env: process.env}, function (error, stdout, stderr) {
+		exec(regressionCommand, {env: process.env}, function (error, stdout, stderr) {
 			// logger.info('\n\nerror', error);
 			// logger.info('\n\nstdout', stdout);
 			// logger.info('\n\nstderr', stderr);
@@ -121,8 +116,7 @@ module.exports = class Automation {
 				appName: appName,
 				appLogo: appLogo,
 				packageJson: packageJson,
-				verbose: verbose,
-				suite: suite
+				verbose: verbose
 			});
 
 			if (error) {
