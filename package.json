@@ -23,7 +23,7 @@
   "engines": {
     "node": "5.10.1"
   },
-  "version": "2.1.0",
+  "version": "2.2.0",
   "scripts": {
     "prepublish": "make build"
   }
