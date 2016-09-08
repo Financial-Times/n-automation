@@ -10,8 +10,7 @@ module.exports = function sendSlackNotification ({
 	reports,
 	// packageJson,
 	verbose,
-	appName = 'Regression',
-	suite
+	appName = 'Regression'
 	// appLogo = 'https://next-geebee.ft.com/assets/brand-ft/icons/favicon-32x32.png'
 }={}) {
 
@@ -23,7 +22,7 @@ module.exports = function sendSlackNotification ({
 			method: 'POST',
 			body: JSON.stringify({
 				username: `${appName} Tests`,
-				text: `Starting ${suite} tests...`
+				text: 'Starting regression tests...'
 			}),
 			headers: {
 				'Content-type': 'application/json'
