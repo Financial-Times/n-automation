@@ -103,7 +103,8 @@ module.exports = class Automation {
 		sendSlackNotification({
 			init: true,
 			appName: appName,
-			verbose: verbose
+			verbose: verbose,
+			suite: suite
 		});
 
 
@@ -120,7 +121,8 @@ module.exports = class Automation {
 				appName: appName,
 				appLogo: appLogo,
 				packageJson: packageJson,
-				verbose: verbose
+				verbose: verbose,
+				suite: suite
 			});
 
 			if (error) {
