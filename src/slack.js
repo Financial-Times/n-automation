@@ -10,6 +10,7 @@ module.exports = function sendSlackNotification ({
 	reports,
 	// packageJson,
 	verbose,
+	compact,
 	appName = 'Regression',
 	suite
 	// appLogo = 'https://next-geebee.ft.com/assets/brand-ft/icons/favicon-32x32.png'
@@ -56,7 +57,7 @@ module.exports = function sendSlackNotification ({
 							failedTestResults += `\n<${testCase.videoUrl}|${testCase.name}>`;
 						}
 						else {
-							testResults += `\n${testCase.name}`;
+							testResults += (compact ? ' ' : '\n') + testCase.name;
 							passed++;
 						}
 					}

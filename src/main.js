@@ -83,6 +83,7 @@ module.exports = class Automation {
 		regressionCommand='make regression',
 		smokeCommand='make smoke',
 		verbose=true,
+		compact=false,
 		packageJson = {},
 		appName,
 		appLogo,
@@ -122,6 +123,7 @@ module.exports = class Automation {
 				appLogo: appLogo,
 				packageJson: packageJson,
 				verbose: verbose,
+				compact: compact,
 				suite: suite
 			});
 
