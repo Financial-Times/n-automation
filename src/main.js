@@ -82,6 +82,7 @@ module.exports = class Automation {
 		nightwatchJson,
 		regressionCommand='make regression',
 		verbose=true,
+		compact=false,
 		packageJson = {},
 		appName,
 		appLogo
@@ -116,7 +117,8 @@ module.exports = class Automation {
 				appName: appName,
 				appLogo: appLogo,
 				packageJson: packageJson,
-				verbose: verbose
+				verbose: verbose,
+				compact: compact
 			});
 
 			if (error) {
