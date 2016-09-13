@@ -22,7 +22,7 @@
     "sinon": "^1.17.4"
   },
   "engines": {
-    "node": "5.10.1"
+    "node": "6.0.0"
   },
   "version": "0.0.0",
   "scripts": {
