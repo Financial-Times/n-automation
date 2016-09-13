@@ -24,3 +24,7 @@ build: $(shell find src -type f)
 	@echo "Building…"
 	@rm -rf build
 	@babel -d build src
+
+npm-publish:
+	npm-prepublish --verbose
+	npm publish --access public
