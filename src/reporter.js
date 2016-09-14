@@ -25,7 +25,7 @@ module.exports = {
 
 		for (const moduleName in modules) {
 			if (modules.hasOwnProperty(moduleName)) {
-				const file = `${outputFolder}${prefix}${moduleName}.json`;
+				const file = `${outputFolder}${prefix}${moduleName.replace('/', '-')}.json`;
 				fs.writeFile(file, JSON.stringify(results, null, 4))
 			}
 		}
