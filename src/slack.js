@@ -19,6 +19,8 @@ module.exports = function sendSlackNotification ({
 	// const appGithub = packageJson && packageJson.repository ? packageJson.repository.url : '';
 	// const appHerokuName = packageJson ? packageJson.name : '';
 
+	logger.info('compact? ', compact);
+
 	if (init && verbose) {
 		const initOptions = {
 			method: 'POST',
