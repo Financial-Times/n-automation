@@ -80,8 +80,6 @@ module.exports = class Automation {
 
 	static run ({
 		nightwatchJson,
-		regressionCommand='make regression',
-		smokeCommand='make smoke',
 		verbose=true,
 		compact=false,
 		packageJson = {},
@@ -94,7 +92,7 @@ module.exports = class Automation {
 			throw new Error('must specify nightwtach config path')
 		}
 
-		const command = suite && suite === 'smoke' ? smokeCommand : regressionCommand;
+		const command = `make ${suite}`;
 
 		logger.info(`Starting ${suite} tests...`);
 		const reportsPath = nightwatchJson.output_folder;
