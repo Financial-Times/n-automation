@@ -129,7 +129,7 @@ module.exports = class Automation {
 
 			if (error) {
 				logger.info('Sending email...', error, stderr)
-				sendEmails(stderr, stdout);
+				sendEmails(stderr, stdout, { suite });
 			}
 		});
 	}
