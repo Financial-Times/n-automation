@@ -7,9 +7,16 @@ const sendSlackNotification = require('./slack');
 const logger = require('@financial-times/n-logger').default.logger;
 
 function emptyReportsFolder (path) {
-	logger.info('Deleting old reports...')
+	logger.info('Deleting old reports...');
 
-	const reportNames = fs.readdirSync(path);
+	let reportNames;
+	try {
+		reportNames = fs.readdirSync(path);
+	} catch (err) {
+		if (err.code === 'ENOENT') {
+			return;
+		}
+	}
 
 	logger.info(reportNames);
 
