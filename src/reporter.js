@@ -31,6 +31,6 @@ module.exports = {
 			});
 
 		Promise.all(writes)
-			.then(() => { done() });
+			.then(() => done() );
 	}
 };
