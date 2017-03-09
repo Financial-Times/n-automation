@@ -4,7 +4,7 @@ const fs = require('fs');
 const util = require('./util');
 const sendEmails = require('./email');
 const sendSlackNotification = require('./slack');
-const logger = require('@financial-times/n-logger').default.logger;
+const logger = require('@financial-times/n-logger').default;
 
 function emptyReportsFolder (path) {
 	logger.info('Deleting old reports...');
