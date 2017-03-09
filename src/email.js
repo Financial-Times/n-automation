@@ -3,7 +3,7 @@ const RECIPIENTS = process.env.REGRESSION_RECIPIENTS;
 
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport(REGRESSION_TRANSPORT);
-const logger = require('@financial-times/n-logger').default.logger;
+const logger = require('@financial-times/n-logger').default;
 
 module.exports = function sendEmails (err, output, { suite = 'regression' } = { }) {
 	const capitalisedSuite = suite.charAt(0).toUpperCase() + suite.slice(1);
