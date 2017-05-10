@@ -3,7 +3,10 @@
   "main": "build/main.js",
   "dependencies": {
     "fs": "0.0.2",
-    "@financial-times/n-heroku-tools": "^6.3.3"
+    "@financial-times/n-heroku-tools": "^6.3.3",
+    "@financial-times/n-logger": "^5.4.0",
+    "isomorphic-fetch": "^2.2.1",
+    "nodemailer": "^2.6.0"
   },
   "repository": {
     "type": "git",
@@ -11,15 +14,16 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "npm-prepublish": "^1.2.1",
     "babel-cli": "^6.5.1",
     "babel-plugin-transform-object-assign": "^6.5.0",
     "babel-preset-es2015": "^6.5.0",
     "babel-register": "^6.5.1",
     "chai": "^3.5.0",
+    "denodeify": "^1.2.1",
     "eslint": "^2.9.0",
     "lintspaces-cli": "^0.1.1",
     "mocha": "^2.2.1",
+    "npm-prepublish": "^1.2.1",
     "sinon": "^1.17.4"
   },
   "engines": {

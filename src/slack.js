@@ -2,7 +2,7 @@ let SLACK_URL = process.env.SLACK_URL;
 let SLACK_MENTIONS = process.env.SLACK_MENTIONS;
 
 const fetch = require('isomorphic-fetch');
-const logger = require('@financial-times/n-logger').default.logger;
+const logger = require('@financial-times/n-logger').default;
 
 module.exports = function sendSlackNotification ({
 	init,
