@@ -1,4 +1,6 @@
-const fs = require('fs')
+const denodeify = require('denodeify');
+
+const writeFile = denodeify(require('fs').writeFile);
 
 function safePath (path) {
 	const lastSlash = path.lastIndexOf('/');
@@ -20,15 +22,15 @@ module.exports = {
 		const outputFolder = safePath(options.output_folder);
 		const prefix = options.filename_prefix;
 		const modules = results.modules;
-		results.sessionId = options.globals.sessionId;
-
-
-		for (const moduleName in modules) {
-			if (modules.hasOwnProperty(moduleName)) {
+		results.sessionId = options.globals.test_settings.sessionId;
+		const writes = Object.keys(modules)
+			.map(moduleName => {
 				const file = `${outputFolder}${prefix}${moduleName.replace('/', '-')}.json`;
-				fs.writeFile(file, JSON.stringify(results, null, 4))
-			}
-		}
-		done();
+				return writeFile(file, JSON.stringify(results, null, 4))
+					.catch(() => { });
+			});
+
+		Promise.all(writes)
+			.then(() => done() );
 	}
 };

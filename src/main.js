@@ -4,12 +4,19 @@ const fs = require('fs');
 const util = require('./util');
 const sendEmails = require('./email');
 const sendSlackNotification = require('./slack');
-const logger = require('@financial-times/n-logger').default.logger;
+const logger = require('@financial-times/n-logger').default;
 
 function emptyReportsFolder (path) {
-	logger.info('Deleting old reports...')
+	logger.info('Deleting old reports...');
 
-	const reportNames = fs.readdirSync(path);
+	let reportNames;
+	try {
+		reportNames = fs.readdirSync(path);
+	} catch (err) {
+		if (err.code === 'ENOENT') {
+			return;
+		}
+	}
 
 	logger.info(reportNames);
 
@@ -80,8 +87,6 @@ module.exports = class Automation {
 
 	static run ({
 		nightwatchJson,
-		regressionCommand='make regression',
-		smokeCommand='make smoke',
 		verbose=true,
 		compact=false,
 		packageJson = {},
@@ -94,7 +99,7 @@ module.exports = class Automation {
 			throw new Error('must specify nightwtach config path')
 		}
 
-		const command = suite && suite === 'smoke' ? smokeCommand : regressionCommand;
+		const command = `make ${suite}`;
 
 		logger.info(`Starting ${suite} tests...`);
 		const reportsPath = nightwatchJson.output_folder;
@@ -129,7 +134,7 @@ module.exports = class Automation {
 
 			if (error) {
 				logger.info('Sending email...', error, stderr)
-				sendEmails(stderr, stdout);
+				sendEmails(stderr, stdout, { suite });
 			}
 		});
 	}
