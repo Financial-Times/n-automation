@@ -10,3 +10,15 @@ unit-test:
 	@mocha --require test/setup --recursive --reporter spec test
 
 test: verify unit-test
+
+build:
+	nui build
+
+build-production:
+	nui build --production
+
+watch:
+	nui watch
+
+run:
+	nht run --https
