@@ -1,13 +1,4 @@
-# TODO n.Makefile & nht
-
-.PHONY: test
-
-clean:
-	git clean -fxd
-
-install:
-	@echo "Installing…"
-	@npm install
+include n.Makefile
 
 verify:
 	@echo "Verifying…"
@@ -19,12 +10,3 @@ unit-test:
 	@mocha --require test/setup --recursive --reporter spec test
 
 test: verify unit-test
-
-build: $(shell find src -type f)
-	@echo "Building…"
-	@rm -rf build
-	@babel -d build src
-
-npm-publish:
-	npm-prepublish --verbose
-	npm publish --access public
