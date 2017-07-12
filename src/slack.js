@@ -8,16 +8,11 @@ module.exports = function sendSlackNotification ({
 	init,
 	error,
 	reports,
-	// packageJson,
 	verbose,
 	compact,
 	appName = 'Regression',
 	suite
-	// appLogo = 'https://next-geebee.ft.com/assets/brand-ft/icons/favicon-32x32.png'
 }={}) {
-
-	// const appGithub = packageJson && packageJson.repository ? packageJson.repository.url : '';
-	// const appHerokuName = packageJson ? packageJson.name : '';
 
 	logger.info('compact? ', compact);
 
@@ -97,17 +92,8 @@ module.exports = function sendSlackNotification ({
 
 	const attachmentSuccess = {
 		'fallback': 'All tests passed',
-		// 'pretext': 'All regression tests passed!',
-		// 'author_name': 'Saucelabs Dashboard',
-		// 'author_link': 'https://saucelabs.com/beta/dashboard/tests',
-		// 'author_icon': 'https://marketplace-cdn.atlassian.com/files/images/2fdb6577-55eb-4d53-a5f5-87771ea85929.png',
-		// 'title': `${appHerokuName}`,
-		// 'title_link': appGithub,
 		'color': 'good',
-		'fields': successFields,
-		// 'footer': `${appName}`,
-		// 'footer_icon': appLogo,
-		// 'ts': Date.now() / 1000
+		'fields': successFields
 	}
 
 	const successBody = {
@@ -125,7 +111,6 @@ module.exports = function sendSlackNotification ({
 
 	if (failuresFound === 0) {
 		successBody.body = JSON.stringify(successBody.body);
-		// logger.info('sending success body')
 		logger.info(successBody)
 		fetch(SLACK_URL, successBody);
 	}
@@ -133,16 +118,12 @@ module.exports = function sendSlackNotification ({
 		const attachmentFailure = JSON.parse(JSON.stringify(attachmentSuccess));
 		attachmentFailure.color = '#f00';
 		attachmentFailure.fields = failedFields;
-		// attachmentFailure.pretext = `${failuresFound} tests failed:`;
-		// attachmentFailure.text = SLACK_MENTIONS;
-		// attachmentSuccess.pretext = 'These tests have passed:'
 
 		const failureBody = JSON.parse(JSON.stringify(successBody));
 		failureBody.body.attachments = [attachmentFailure, attachmentSuccess];
 		failureBody.body.text = `${failuresFound} test cases failed, ${SLACK_MENTIONS}`;
 
 		failureBody.body = JSON.stringify(failureBody.body);
-		// logger.info('sending failure body')
 		logger.info(failureBody)
 		fetch(SLACK_URL, failureBody);
 	}
