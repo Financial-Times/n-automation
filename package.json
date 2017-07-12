@@ -2,6 +2,8 @@
   "name": "@financial-times/n-automation",
   "main": "build/main.js",
   "dependencies": {
+    "fs": "0.0.2",
+    "@financial-times/n-heroku-tools": "^6.3.3",
     "@financial-times/n-logger": "^5.4.0",
     "isomorphic-fetch": "^2.2.1",
     "nodemailer": "^2.6.0"
