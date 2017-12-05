@@ -115,9 +115,9 @@ module.exports = class Automation {
 
 
 		exec(command, {env: process.env}, function (error, stdout, stderr) {
-			// logger.info('\n\nerror', error);
-			// logger.info('\n\nstdout', stdout);
-			// logger.info('\n\nstderr', stderr);
+			console.log('\n\n[debug] error:', error);
+			console.log('\n\n[debug] stdout:', stdout);
+			console.log('\n\n[debug] stderr:', stderr);
 
 			const reports = readReports(reportsPath);
 
